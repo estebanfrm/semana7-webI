@@ -9,16 +9,18 @@ function saveStudents(student) {
     localStorage.setItem('students', JSON.stringify(students));
 }
 
-function saveStudents(students) {
-    localStorage.setItem('students', JSON.stringify(students));
-}
 
-function deleteStudent() {}
+function deleteStudent(index) {
+    const students = getStudents();
+    students.splice(index, 1); // Ahora 'index' sí tiene el valor correcto.
+    localStorage.setItem("students", JSON.stringify(students));
+    renderList(); // Vuelve a dibujar la lista para reflejar los cambios.
+}
 
     //Router
 
 function router() {
-    const path = location.slice(1) || '/';
+    const path = location.hash.slice(1) || '/';
     const app = document.getElementById('app');
     app.innerHTML = "";
 
@@ -61,7 +63,7 @@ function attachFormLogic() {
         const avg = ((n1 + n2 + n3) / 3).toFixed(2);
         saveStudents({ name, avg});
 
-        document.getElementById("msg").textContent = `✅Estudiante ${name} con promedio ${avg?.toFixes(2)} agregado con exito.`;
+        document.getElementById("msg").textContent = `✅Estudiante ${name} con promedio ${avg} agregado con exito.`;
         form.reset();
     });
 }    
@@ -84,12 +86,12 @@ function renderList() {
     const template = document.getElementById("student-item-template");
 
     students.forEach((s, i) => {
-        const clone = template.contentEditable.cloneNode(true);
+        const clone = template.content.cloneNode(true);
 
         clone.querySelector(".student-name").textContent = s.name;
-        clone.querySelector(".student-avg").textContent = s.avg.toFixed(2);
+        clone.querySelector(".student-avg").textContent = s.avg;
 
-        clone.querySelector("delete-btn").addEventListener("click", () => {
+        clone.querySelector(".delete-btn").addEventListener("click", () => {
             deleteStudent(i);
         });
 
@@ -98,4 +100,5 @@ function renderList() {
 }
 
 window.addEventListener("hashchange", router);
-window.addEventListener();
+window.addEventListener("DOMContentLoaded", router);
+
